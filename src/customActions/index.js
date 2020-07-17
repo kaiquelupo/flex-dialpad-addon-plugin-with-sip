@@ -1,6 +1,6 @@
 import { Actions } from '@twilio/flex-ui';
 import { acceptInternalTask, rejectInternalTask, isInternalCall, toggleHoldInternalCall } from './internalCall';
-import { kickExternalTransferParticipant } from './externalTransfer';
+import { kickExternalTransferParticipant, makeExternalTransfer } from './externalTransfer';
 import ConferenceService from '../helpers/ConferenceService';
 
 export default (manager) => {
@@ -102,5 +102,13 @@ export default (manager) => {
       }
     
   })
+
+  Actions.addListener('beforeTransferTask', async (payload, abortFunction) => {
+
+    if(makeExternalTransfer(manager, payload)) {
+       abortFunction();
+    }
+  
+  });
 
 }
