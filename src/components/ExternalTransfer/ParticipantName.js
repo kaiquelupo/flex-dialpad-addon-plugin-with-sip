@@ -22,6 +22,22 @@ const NameListItem = styled('div')`
   overflow: hidden;
 `;
 
+const getRealName = (name) => {
+
+  if(name) {
+
+    const regex = new RegExp(process.env.REACT_APP_EXTERNAL_SIP.replace("{{Resource}}", "(.*)"));
+    const matchRegex = name.match(regex);
+
+    if(matchRegex){
+      return matchRegex[1];
+    }
+
+  }
+
+  return name;
+} 
+
 class ParticipantName extends React.Component {
   state = {
     name: ''
@@ -53,11 +69,11 @@ class ParticipantName extends React.Component {
     return this.props.listMode
       ? (
         <NameListItem className="ParticipantCanvas-Name">
-          {this.state.name}
+          {getRealName(this.state.name)}
         </NameListItem>
       ) : (
         <Name className="ParticipantCanvas-Name">
-          {this.state.name}
+          {getRealName(this.state.name)}
         </Name>
       );
   }

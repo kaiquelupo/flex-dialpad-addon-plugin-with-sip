@@ -8,6 +8,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
 import ConferenceService from '../../helpers/ConferenceService';
+import { handleExternalNumber } from '../../customActions/externalTransfer';
 
 class ConferenceDialog extends React.Component {
   state = {
@@ -45,9 +46,11 @@ class ConferenceDialog extends React.Component {
   }
 
   addConferenceParticipant = async () => {
-    const to = this.state.conferenceTo;
 
     const { task } = this.props;
+
+    const to = handleExternalNumber(this.state.conferenceTo, task);
+
     const conference = task && (task.conference || {});
     const { conferenceSid } = conference;
 

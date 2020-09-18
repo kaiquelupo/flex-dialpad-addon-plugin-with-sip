@@ -42,7 +42,7 @@ const addExternalParticipant = async (manager, target, task) => {
 
 }
 
-const handleExternalNumber = (number, task) => {
+export const handleExternalNumber = (number, task) => {
     let to = number; 
 
     const { REACT_APP_EXTERNAL_SIP } = process.env;
@@ -62,7 +62,7 @@ const handleExternalNumber = (number, task) => {
         }, "");
 
         to = `${REACT_APP_EXTERNAL_SIP.replace(/{{.*}}/, number)}?${attributes !== "" ? attributes : ""}`;
-        
+
     }
 
     return to;
