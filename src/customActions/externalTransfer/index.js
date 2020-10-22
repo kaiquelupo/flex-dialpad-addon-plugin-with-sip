@@ -54,7 +54,7 @@ export const handleExternalNumber = (number, task) => {
             const attr = cur.match(/REACT_APP_SIP_ATTR_(.*)/);
             
             if(attr){
-                return `${pr}${idx === 0 ? "" : "&"}${attr[1]}=${task.attributes[process.env[cur]]}`;
+                return `${pr}${idx === 0 ? "" : "&"}X-${attr[1]}=${task.attributes[process.env[cur]]}`;
             }
     
             return pr;
