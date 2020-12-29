@@ -105,15 +105,20 @@ and then
 
     - REACT_APP_SERVICE_BASE_URL: your Twilio Functions base url (this will be available after you deploy your functions). In local development environment, it could be your localhost base url. 
     - REACT_APP_TASK_CHANNEL_SID: the voice channel SID 
+
+    If you are going to make external transfers using SIP, you can follow the above but using the .env.sip.example file. Following are the additional environment variables you can set: 
+
     - REACT_APP_EXTERNAL_SIP: the SIP endpoint to call when a number with less than 4 digits is added as a external transfer. This 4 digits max number should represent your resource number in the other provider and it will replace any placeholder with the format `{{<any_string>}}` in the SIP endpoint. 
     - REACT_APP_SIP_ATTR_\<NAME\>: if you want to add some attributes to the SIP call with variables found inside the Task attributes, you can add as many attributes as you want where `NAME` is the name of the attribute and the value of this environment variable is the task attribute name. Remember, every atttribute will be pass through SIP with the `X-` initials.
     - REACT_APP_EXTERNAL_QUEUES: a list of queue names split by `,`(comma). This list is used to redirect transfers meant to TaskQueues with these names to the external SIP address. 
+    - REACT_APP_EXTERNAL_SIP_TARGET_PATTERN: the Regex Pattern in order to recognize which target number should use SIP. Note that if the number matches the regex, the number itself will be added to the SIP address placeholder as explained above. For example, let's say that every number with less than 4 digits should be consider an external extension. Therefore, this environment variable should have this value `^\d{1,4}$`. 
+    
 
   **Note**: Remember that both .env.development and .env.production is for front-end use so do not add any type of key/secret variable to them. When developing, the .env.development is used while the .env.production is used when building and deploying the plugin. Also, just variables starting with the name *REACT_APP_* will work.
 
   **Note about SIP**: by using the SIP transfer, this plugin just implements `COLD` transfer. It was more of a project decision than a technical problem because as SIP transfers are going to external infrastructure, it seems a good idea to keep at least on agent in the call if some communication issue happens.  
 
-  **Note about SIP and Workers**: if you want to redirect transfers meant to a worker to a external SIP address, you can add the attribute `external` to the worker with the target resource as value (remember, this value will be added to the REACT_APP_EXTERNAL_SIP address).  
+  **Note about SIP and Workers**: if you want to redirect transfers meant to a worker to a external number/sip, you can add the attribute `external` to the worker with external number/sip.
 
 4.  run `npm install`
 
