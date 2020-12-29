@@ -104,11 +104,11 @@ class ConferenceService {
     dispatch({ type: 'CONFERENCE_MULTIPLE_UPDATE', payload: { conferences } });
   }
 
-  holdCustomer = async (manager, conferenceSid) => {
+  toggleCustomerHold = async (conferenceSid, hold) => {
 
     let customer;
 
-    manager.store.getState().flex.conferences.states.forEach(conference => {
+    this.manager.store.getState().flex.conferences.states.forEach(conference => {
         const currentConference = conference.source;
 
         if (currentConference.conferenceSid === conferenceSid) {
@@ -118,7 +118,7 @@ class ConferenceService {
 
     if(customer){
 
-        await this.holdParticipant(conferenceSid, customer._callSid);
+      await this._toggleParticipantHold(conferenceSid, customer._callSid, hold);
 
     }
 

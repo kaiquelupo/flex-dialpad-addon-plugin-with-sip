@@ -38,9 +38,8 @@ export const addExternalParticipant = async (manager, from, target, task, forceS
     let participantCallSid;
     try {
 
-
         if(REACT_APP_HOLD_CUSTOMER_TRANSFER === "true") {
-            await ConferenceService.holdCustomer(manager, mainConferenceSid);
+            await ConferenceService.toggleCustomerHold(mainConferenceSid, true);
         }
 
         participantCallSid = await ConferenceService.addParticipant(mainConferenceSid, from, to);

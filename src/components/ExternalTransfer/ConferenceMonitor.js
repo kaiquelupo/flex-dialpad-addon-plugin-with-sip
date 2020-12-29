@@ -33,7 +33,14 @@ class ConferenceMonitor extends React.Component {
   }
 
   handleOnlyTwoParticipants = (conferenceSid, participants) => {
+    const { REACT_APP_UNHOLD_ON_HANGUP } = process.env;
+
     console.log('Conference participants dropped to two. Setting endConferenceOnExit to true for all participants.');
+
+    if(REACT_APP_UNHOLD_ON_HANGUP === "true") { 
+      ConferenceService.toggleCustomerHold(conferenceSid, false);
+    }
+    
     this.setEndConferenceOnExit(conferenceSid, participants, true);
   }
 
