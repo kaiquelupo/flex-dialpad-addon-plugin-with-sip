@@ -16,7 +16,7 @@ export const kickExternalTransferParticipant = (payload) => {
 
 export const addExternalParticipant = async (manager, from, target, task, forceSip) => {
 
-    const { REACT_APP_HOLD_CUSTOMER_TRANSFER } = process.env;
+    const { REACT_APP_HOLD_CUSTOMER_ON_TRANSFER } = process.env;
 
 
     const to = handleExternalNumber(target, task, forceSip);
@@ -38,7 +38,7 @@ export const addExternalParticipant = async (manager, from, target, task, forceS
     let participantCallSid;
     try {
 
-        if(REACT_APP_HOLD_CUSTOMER_TRANSFER === "true") {
+        if(REACT_APP_HOLD_CUSTOMER_ON_TRANSFER === "true") {
             await ConferenceService.toggleCustomerHold(mainConferenceSid, true);
         }
 
