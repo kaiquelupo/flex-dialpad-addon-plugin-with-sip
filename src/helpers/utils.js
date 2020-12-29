@@ -24,7 +24,13 @@ const findQueues = (manager, query) => {
     })
 }
 
+const findQueueFromEnv = (name) => {
+    const queues = process.env.REACT_APP_EXTERNAL_QUEUES.split(",");
+    return queues.includes(name);
+}
+
 export {
     findWorkers,
-    findQueues
+    findQueues,
+    findQueueFromEnv
 }

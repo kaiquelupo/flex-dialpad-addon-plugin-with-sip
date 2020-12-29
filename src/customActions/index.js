@@ -3,6 +3,8 @@ import { acceptInternalTask, rejectInternalTask, isInternalCall, toggleHoldInter
 import { kickExternalTransferParticipant, makeExternalTransfer } from './externalTransfer';
 import ConferenceService from '../helpers/ConferenceService';
 
+const { REACT_APP_EXTERNAL_SIP, REACT_APP_EXTERNAL_QUEUES } = process.env;
+
 export default (manager) => {
 
   Actions.addListener('beforeAcceptTask', (payload, abortFunction) => {
@@ -103,12 +105,16 @@ export default (manager) => {
     
   })
 
-  Actions.addListener('beforeTransferTask', async (payload, abortFunction) => {
+  if(REACT_APP_EXTERNAL_SIP && REACT_APP_EXTERNAL_QUEUES) {
 
-    if(makeExternalTransfer(manager, payload)) {
-       abortFunction();
-    }
-  
-  });
+    Actions.addListener('beforeTransferTask', async (payload, abortFunction) => {
+
+      if(await makeExternalTransfer(manager, payload)) {
+        abortFunction();
+      }
+    
+    });
+
+  }
 
 }

@@ -24,9 +24,11 @@ const NameListItem = styled('div')`
 
 const getRealName = (name) => {
 
-  if(name) {
+  const { REACT_APP_EXTERNAL_SIP } = process.env;
 
-    const regex = new RegExp(process.env.REACT_APP_EXTERNAL_SIP.replace("{{Resource}}", "(.*)"));
+  if(name && REACT_APP_EXTERNAL_SIP) {
+
+    const regex = new RegExp(REACT_APP_EXTERNAL_SIP.replace("{{Resource}}", "(.*)"));
     const matchRegex = name.match(regex);
 
     if(matchRegex){

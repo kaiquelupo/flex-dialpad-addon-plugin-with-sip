@@ -7,8 +7,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
-import ConferenceService from '../../helpers/ConferenceService';
-import { handleExternalNumber } from '../../customActions/externalTransfer';
+import { addExternalParticipant } from '../../customActions/externalTransfer';
 
 class ConferenceDialog extends React.Component {
   state = {
@@ -46,36 +45,14 @@ class ConferenceDialog extends React.Component {
   }
 
   addConferenceParticipant = async () => {
+   
+    const { phoneNumber, task } = this.props;
+    const { conferenceTo } = this.state;
 
-    const { task } = this.props;
+    addExternalParticipant(Manager.getInstance(), phoneNumber || null, conferenceTo, task)
 
-    const to = handleExternalNumber(this.state.conferenceTo, task);
-
-    const conference = task && (task.conference || {});
-    const { conferenceSid } = conference;
-
-    const mainConferenceSid = task.attributes.conference ? 
-      task.attributes.conference.sid : conferenceSid;
-
-    let from;
-    if (this.props.phoneNumber) {
-      from = this.props.phoneNumber
-    } else {
-      from = Manager.getInstance().serviceConfiguration.outbound_call_flows.default.caller_id;
-    }
-
-    // Adding entered number to the conference
-    console.log(`Adding ${to} to conference`);
-    let participantCallSid;
-    try {
-
-      participantCallSid = await ConferenceService.addParticipant(mainConferenceSid, from, to);
-      ConferenceService.addConnectingParticipant(mainConferenceSid, participantCallSid, 'unknown');
-
-    } catch (error) {
-      console.error('Error adding conference participant:', error);
-    }
     this.setState({ conferenceTo: '' });
+
   }
 
   render() {

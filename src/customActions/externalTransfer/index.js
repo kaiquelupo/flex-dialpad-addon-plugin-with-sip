@@ -1,5 +1,5 @@
 import ConferenceService from '../../helpers/ConferenceService';
-import { findWorkers, findQueues } from '../../helpers/utils';
+import { findWorkers, findQueues, findQueueFromEnv } from '../../helpers/utils';
 
 export const kickExternalTransferParticipant = (payload) => {
     const { task, targetSid } = payload;
@@ -14,17 +14,20 @@ export const kickExternalTransferParticipant = (payload) => {
     return ConferenceService.removeParticipant(conference, participantSid);
 }
 
-const addExternalParticipant = async (manager, target, task) => {
+export const addExternalParticipant = async (manager, from, target, task, forceSip) => {
 
-    const to = handleExternalNumber(target, task);
+
+    const to = handleExternalNumber(target, task, forceSip);
 
     const conference = task && (task.conference || {});
     const { conferenceSid } = conference;
 
     const mainConferenceSid = task.attributes.conference ? 
         task.attributes.conference.sid : conferenceSid;
-
-    let from = manager.serviceConfiguration.outbound_call_flows.default.caller_id;
+    
+    if(!from) {
+        from = manager.serviceConfiguration.outbound_call_flows.default.caller_id;
+    }
 
     console.log(from, to, mainConferenceSid);
 
@@ -42,12 +45,18 @@ const addExternalParticipant = async (manager, target, task) => {
 
 }
 
-export const handleExternalNumber = (number, task) => {
+export const handleExternalNumber = (number, task, forceSip) => {
     let to = number; 
 
-    const { REACT_APP_EXTERNAL_SIP } = process.env;
+    const { REACT_APP_EXTERNAL_SIP, REACT_APP_EXTERNAL_SIP_TARGET_PATTERN } = process.env;
 
-    if(number.length <= 4 && REACT_APP_EXTERNAL_SIP) {
+    if(
+        (
+            to.match(new RegExp(REACT_APP_EXTERNAL_SIP_TARGET_PATTERN || null, "g")) ||
+            forceSip
+        )
+        && REACT_APP_EXTERNAL_SIP
+    ) {
 
         const attributes = Object.keys(process.env).reduce((pr, cur, idx) => {
 
@@ -82,7 +91,7 @@ export const makeExternalTransfer = async (manager, payload) => {
                 alert("This worker is outside Flex. A warm transfer will be made instead.")
             }
 
-            addExternalParticipant(manager, worker.attributes.external, task);
+            addExternalParticipant(manager, null, worker.attributes.external, task);
 
             return true;
 
@@ -92,17 +101,15 @@ export const makeExternalTransfer = async (manager, payload) => {
   
     if(targetSid.match(/WQ.*/)) {
 
-        const queues = process.env.REACT_APP_EXTERNAL_QUEUES.split(",");
-
         const { queueList: [ queue ] } = await findQueues(manager, `data.queue_sid == "${targetSid}"`);
 
-        if(queues.includes(queue.queue_name)) {
+        if(findQueueFromEnv(queue.queue_name)) {
 
             if(options.mode === "COLD"){
                 alert("This queue is outside Flex. A warm transfer will be made instead.")
             }
             
-            addExternalParticipant(manager, queue.queue_name, task);
+            addExternalParticipant(manager, null, queue.queue_name, task, true);
 
             return true;
 
