@@ -16,6 +16,8 @@ export const kickExternalTransferParticipant = (payload) => {
 
 export const addExternalParticipant = async (manager, from, target, task, forceSip) => {
 
+    const { REACT_APP_HOLD_CUSTOMER_TRANSFER } = process.env;
+
 
     const to = handleExternalNumber(target, task, forceSip);
 
@@ -35,6 +37,11 @@ export const addExternalParticipant = async (manager, from, target, task, forceS
     console.log(`Adding ${to} to conference`);
     let participantCallSid;
     try {
+
+
+        if(REACT_APP_HOLD_CUSTOMER_TRANSFER === "true") {
+            await ConferenceService.holdCustomer(manager, mainConferenceSid);
+        }
 
         participantCallSid = await ConferenceService.addParticipant(mainConferenceSid, from, to);
         ConferenceService.addConnectingParticipant(mainConferenceSid, participantCallSid, 'unknown');

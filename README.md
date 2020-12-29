@@ -105,6 +105,7 @@ and then
 
     - REACT_APP_SERVICE_BASE_URL: your Twilio Functions base url (this will be available after you deploy your functions). In local development environment, it could be your localhost base url. 
     - REACT_APP_TASK_CHANNEL_SID: the voice channel SID 
+    - REACT_APP_HOLD_CUSTOMER_TRANSFER: the value of this variable just be the string `true` if you want to put the customer on hold when starting an external transfer. If you don't want that, you can remove this variable from your .env file.
 
     If you are going to make external transfers using SIP, you can follow the above but using the .env.sip.example file. Following are the additional environment variables you can set: 
 
